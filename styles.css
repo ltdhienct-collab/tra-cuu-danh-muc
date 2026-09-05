@@ -1,0 +1,895 @@
+/* =========================================================
+   1. CẤU HÌNH MẶC ĐỊNH CHO POPUP (Cố định 800x600px)
+   ========================================================= */
+html, body {
+    width: 800px !important;
+    height: 600px !important;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Không hiện thanh cuộn toàn trang */
+    box-sizing: border-box;
+}
+
+.popup-container, .container {
+    width: 800px !important;
+    height: 600px !important;
+    display: flex;
+    flex-direction: column; /* Bố cục Flexbox dọc */
+    box-sizing: border-box;
+    padding: 15px;
+}
+
+/* Khung nội dung/bảng tự động co giãn và cuộn nội bộ */
+.tab-content-wrapper {
+    flex: 1;
+    overflow-y: auto;   /* Hiện thanh cuộn đứng khi bảng quá dài */
+    min-height: 0;      /* Bắt buộc có để Flexbox không bị tràn chiều cao */
+    margin-bottom: 10px;
+}
+
+/* Footer cố định ở đáy Popup */
+.footer-container {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+    flex-shrink: 0;     /* Giữ nguyên kích thước, không bị co ép mất dòng */
+}
+
+.footer-container h6 {
+    text-align: center;
+}
+
+
+/* =========================================================
+   2. CẤU HÌNH KHI MỞ TOÀN MÀN HÌNH (Full Tab Mode)
+   Chỉ kích hoạt khi JS gán class 'is-full-tab' vào <html>
+   ========================================================= */
+html.is-full-tab, 
+html.is-full-tab body {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100vh !important;
+    overflow: auto !important;
+}
+
+html.is-full-tab .popup-container,
+html.is-full-tab .container {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh !important;
+}
+
+html.is-full-tab .tab-content-wrapper {
+    max-height: none !important;
+    overflow-y: visible !important;
+    flex: 1;
+}
+
+html.is-full-tab .footer-container {
+    margin-top: auto !important;
+    padding: 20px 0;
+}
+
+
+#dataTable1 th, #dataTable1 td, #dataTable2 th, #dataTable2 td {
+    word-wrap: break-word;
+}
+
+/* Định dạng cho phần highlight */
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+/* Định dạng cho các ô có thể chỉnh sửa */
+td[contenteditable="true"] {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+
+/* Styling cho nút Mở toàn màn hình */
+.btn-fullscreen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  user-select: none;
+}
+
+/* Hiệu ứng khi di chuột (Hover) */
+.btn-fullscreen:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Hiệu ứng khi bấm xuống (Active) */
+.btn-fullscreen:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+/* Style cho Icon SVG */
+.btn-fullscreen .btn-icon {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.25s ease;
+}
+
+/* Icon nhích chéo lên trên khi Hover */
+.btn-fullscreen:hover .btn-icon {
+  transform: translate(2px, -2px);
+}
+/*.container {
+    width: 100%; /* Đặt chiều rộng cho container 
+}*/
+
+/* Định dạng cho các bảng */
+.table-container {
+    display: none; /* Ẩn các bảng mặc định */
+}
+
+.table-container.active {
+    display: block; /* Hiển thị bảng được chọn */
+}
+/* .popup-container {
+    top: 0;
+    right: 0;
+    width: 800px; /* Đặt chiều rộng cố định 
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    z-index: 1000;*/
+}
+/* Thêm vào styles.css */
+.table tr[data-level="province"] {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.table tr[data-level="district"] {
+    background-color: #fff;
+    padding-left: 20px;
+}
+
+.table tr[data-level="ward"] td:nth-child(2) {
+    padding-left: 40px;
+}
+/* Style cho toast notification */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    z-index: 1000;
+    animation: fadeInOut 2s ease-in-out;
+}
+
+.toast-notification.success {
+    background-color: rgba(40, 167, 69, 0.9);
+}
+
+.toast-notification.error {
+    background-color: rgba(220, 53, 69, 0.9);
+}
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    20% { opacity: 1; transform: translateY(0); }
+    80% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* CSS cho các cấp hành chính */
+tr[data-level="tinhthanhpho"] {
+    background-color: #e3f2fd !important; /* Màu xanh nhạt cho cấp tỉnh */
+    font-weight: bold;
+ }
+ 
+ tr[data-level="quanhuyen"] {
+    background-color: #f5f5f5 !important; /* Màu xám nhạt cho cấp huyện */
+    padding-left: 20px;
+ }
+ 
+ tr[data-level="phuongxa"] {
+    background-color: white !important;
+ }
+ 
+ /* Hiệu ứng hover */
+ tr[data-level="tinhthanhpho"]:hover {
+    background-color: #bbdefb !important; /* Màu xanh đậm hơn khi hover */
+    transition: background-color 0.3s ease;
+ }
+ 
+ tr[data-level="quanhuyen"]:hover {
+    background-color: #e0e0e0 !important; /* Màu xám đậm hơn khi hover */
+    transition: background-color 0.3s ease;
+ }
+ 
+ tr[data-level="phuongxa"]:hover {
+    background-color: #f8f9fa !important; /* Màu rất nhạt khi hover */
+    transition: background-color 0.3s ease;
+ }
+ 
+ /* Thụt đầu dòng cho cấp thấp hơn */
+ tr[data-level="quanhuyen"] td:first-child {
+    padding-left: 30px;
+ }
+ 
+ tr[data-level="phuongxa"] td:first-child {
+    padding-left: 60px;
+ }
+ 
+ /* Căn chỉnh chung cho bảng */
+ .table td {
+    vertical-align: middle;
+    padding: 8px 12px;
+ }
+ 
+/* Hiệu ứng loading cho table9 */
+#table9.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Styles cho highlight trong table9 */
+#table9 .highlight {
+    background-color: #ffeb3b;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Styles cho các icon trong tên đơn vị */
+#table9 .province-row td:nth-child(2) {
+    font-size: 16px;
+}
+
+#table9 .commune-row td:nth-child(2) {
+    font-size: 14px;
+    color: #495057;
+}
+
+/* ===== TO-DO LIST STYLES ===== */
+
+/* Todo Toggle Button */
+#toggleTodoBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+#toggleTodoBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+#toggleTodoBtn:active {
+    transform: translateY(0);
+}
+
+/* Todo active state */
+#toggleTodoBtn.active {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+}
+
+#toggleTodoBtn.active:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+}
+
+/* Todo Form Container */
+#todoFormContainer .card {
+    border: 2px solid #28a745;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#todoFormContainer .card-title {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Todo Table */
+#todoTable tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+#todoTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status badges */
+.todo-status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 13px;
+}
+
+.todo-status.upcoming {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.todo-status.inprogress {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.todo-status.completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Todo action buttons - Tối ưu để vừa 1 dòng */
+.todo-action-btn {
+    padding: 2px 5px !important;
+    margin: 0 1px !important;
+    font-size: 14px !important;
+    min-width: 30px;
+    line-height: 1.3;
+    border-radius: 4px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Hiệu ứng hover */
+.todo-action-btn:hover {
+    transform: scale(1.08);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Đảm bảo cell chứa các nút không wrap */
+#todoTable td.text-center {
+    white-space: nowrap;
+    padding: 6px 4px;
+}
+
+/* Todo header stats */
+.alert-info strong {
+    color: #28a745;
+}
+
+/* Highlight overdue tasks */
+.todo-overdue {
+    background-color: #f8d7da !important;
+}
+
+.todo-overdue td {
+    color: #721c24;
+}
+
+/* Today's tasks */
+.todo-today {
+    background-color: #fff3cd !important;
+}
+
+/* Completed tasks */
+.todo-completed-row {
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+/* Responsive adjustments for todo */
+@media (max-width: 768px) {
+    #todoTable th, #todoTable td {
+        font-size: 11px;
+        padding: 4px 2px;
+    }
+    
+    .todo-action-btn {
+        padding: 1px 4px !important;
+        font-size: 12px !important;
+        min-width: 26px;
+        margin: 0 !important;
+    }
+}
+
+/* Todo empty state */
+#todoTableBody td.text-muted {
+    padding: 40px 20px;
+    font-size: 16px;
+}
+
+/* Form validation feedback */
+.form-control:invalid {
+    border-color: #dc3545;
+}
+
+.form-control:valid {
+    border-color: #28a745;
+}
+
+/* Button gaps */
+.d-flex.gap-2 > * {
+    margin-right: 5px;
+}
+
+.d-flex.gap-2 > *:last-child {
+    margin-right: 0;
+}
+
+/* =====================================================================
+   QUICK VIEW PANEL STYLES - v5.0
+   ===================================================================== */
+
+.quick-view-container {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.quick-view-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    overflow: hidden;
+}
+
+.quick-view-header {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.quick-view-title {
+    margin: 0;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quick-view-icon {
+    font-size: 20px;
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.quick-view-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.3s ease;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quick-view-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.quick-view-body {
+    padding: 20px;
+    background: white;
+}
+
+/* Quick View Stats */
+.quick-view-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.stat-overdue {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+}
+
+.stat-today {
+    background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+    color: #333;
+}
+
+.stat-upcoming {
+    background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+    color: white;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick View Task List */
+.quick-view-task-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.quick-task-item {
+    background: #f8f9fa;
+    border-left: 4px solid #28a745;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.quick-task-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.quick-task-item.overdue {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+}
+
+.quick-task-item.today {
+    border-left-color: #ffc107;
+    background: #fffef5;
+}
+
+.quick-task-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.quick-task-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #666;
+}
+
+.quick-task-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.quick-task-status {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.quick-task-status.overdue-status {
+    background: #dc3545;
+    color: white;
+}
+
+.quick-task-status.today-status {
+    background: #ffc107;
+    color: #333;
+}
+
+.quick-task-status.upcoming-status {
+    background: #17a2b8;
+    color: white;
+}
+
+.quick-task-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 5px;
+}
+
+.quick-task-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.quick-task-btn.complete {
+    background: #28a745;
+    color: white;
+}
+
+.quick-task-btn.complete:hover {
+    background: #218838;
+}
+
+.quick-task-btn.view {
+    background: #007bff;
+    color: white;
+}
+
+.quick-task-btn.view:hover {
+    background: #0056b3;
+}
+
+/* Empty State */
+.quick-view-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.quick-view-empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.quick-view-empty-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Quick View Footer */
+.quick-view-footer {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+}
+
+.btn-view-full {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-view-full:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Scrollbar Styling cho Quick View */
+.quick-view-task-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.quick-view-task-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.quick-view-task-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.quick-view-task-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Animation cho task items */
+.quick-task-item {
+    animation: fadeInLeft 0.3s ease-out;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive cho Quick View */
+@media (max-width: 768px) {
+    .quick-view-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .stat-number {
+        font-size: 24px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+    
+    .quick-task-name {
+        font-size: 13px;
+    }
+}
+
+/* ===== KẾT THÚC QUICK VIEW STYLES ===== */
+
+/* =====================================================================
+   TAB SYSTEM ENHANCEMENTS
+   ===================================================================== */
+
+/* Smooth scrolling cho tab content */
+.tab-content-wrapper {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar cho tab content */
+.tab-content-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* Badge hiển thị số lượng công việc trên tab */
+.tab-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .tab-button {
+        font-size: 14px;
+        padding: 12px 10px;
+    }
+    
+    .tab-icon {
+        font-size: 18px;
+    }
+    
+    .tab-content-wrapper {
+        padding: 15px;
+    }
+}
+
+/* Hiệu ứng loading khi chuyển tab */
+.tab-content.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.tab-content.loading::after {
+    content: "Đang tải...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== KẾT THÚC TAB SYSTEM ENHANCEMENTS ===== */
+/* 1. Đảm bảo khung chứa bảng có thanh cuộn (overflow) */
+.table-container, .tab-content-wrapper {
+    max-height: 500px; /* Hoặc chiều cao bạn muốn */
+    overflow-y: auto;  /* Tạo thanh cuộn đứng */
+}
+
+/* 2. Giữ cố định hàng tiêu đề khi cuộn */
+.table thead th, 
+#dataTable10 thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10; /* Đảm bảo tiêu đề luôn nằm nổi lên trên các dòng dữ liệu */
+    background-color: green; /* Giữ màu nền tiêu đề không bị dính chữ bên dưới */
+    color: white;
+}
+
+/* ===== MOBILE/PWA OVERRIDES ===== */
+html, body { width: 100% !important; min-width: 0 !important; height: 100% !important; overflow: auto !important; }
+body { -webkit-text-size-adjust: 100%; }
+.popup-container, .popup-container .container, html.is-full-tab .popup-container, html.is-full-tab .container { width: 100% !important; height: auto !important; min-height: 100vh !important; padding: 0 !important; }
+.tab-navigation { position: sticky; top: 0; z-index: 100; border-radius: 0 !important; }
+.tab-button { padding: 12px 8px !important; font-size: 13px !important; }
+.tab-content-wrapper { max-height: none !important; overflow: visible !important; padding: 12px !important; }
+.table-container { max-height: 65vh !important; overflow: auto !important; }
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#lookup-tab h2 { font-size: 22px !important; margin-bottom: 14px !important; }
+.d-flex.gap-2 { flex-wrap: wrap; }
+.d-flex.gap-2 > * { margin-bottom: 4px; }
+.btn, .form-control, select { min-height: 42px; }
+.footer-container { padding: 12px !important; }
+@media (max-width: 600px) {
+  .tab-button span:last-child { font-size: 12px; }
+  .tab-icon { font-size: 16px !important; }
+  .row > [class*="col-"] { margin-bottom: 8px; }
+  #exportBtn, #importFiletext, #exportExcelBtn, #btnOpenFullTab { flex: 1 1 45%; }
+}

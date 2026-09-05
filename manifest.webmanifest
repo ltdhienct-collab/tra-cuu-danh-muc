@@ -1,0 +1,10 @@
+{
+  "name": "Tra cứu danh mục ngành kinh tế, nghề",
+  "short_name": "Tra cứu danh mục",
+  "start_url": "./index.html?mode=tab",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "lang": "vi",
+  "icons": [{"src":"icon128.png","sizes":"128x128","type":"image/png"}]
+}
